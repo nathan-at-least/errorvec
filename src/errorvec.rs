@@ -36,8 +36,15 @@ where
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let total = self.0.len();
         for (i, e) in self.0.iter().enumerate() {
-            writeln!(f, "Error {} of {}:\n{}\n", i + 1, total, e)?;
+            let edisp = e.to_string();
+            writeln!(f, "[error {} of {}] {}", i + 1, total, edisp.trim_end())?;
+            if i + 1 < total {
+                writeln!(f)?;
+            }
         }
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests;
