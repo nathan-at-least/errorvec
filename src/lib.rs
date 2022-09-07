@@ -3,6 +3,8 @@ use std::fmt;
 #[derive(Debug, derive_more::From)]
 pub struct ErrorVec<T>(Vec<T>);
 
+impl<T> std::error::Error for ErrorVec<T> where T: fmt::Display + fmt::Debug {}
+
 impl<A> FromIterator<A> for ErrorVec<A> {
     fn from_iter<T>(iter: T) -> Self
     where
