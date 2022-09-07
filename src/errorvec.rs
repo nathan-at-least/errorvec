@@ -1,11 +1,37 @@
 use std::fmt;
 
-#[derive(Debug, derive_more::From, derive_more::Into)]
+#[derive(Debug, Default, derive_more::From, derive_more::Into)]
 pub struct ErrorVec<E>(Vec<E>);
 
 impl<E> ErrorVec<E> {
+    /// Iterate over the contained errors.
     pub fn iter(&self) -> impl Iterator<Item = &E> {
         self.0.iter()
+    }
+
+    /// Push an error onto the end.
+    pub fn push(&mut self, error: E) {
+        self.0.push(error);
+    }
+
+    /// If `self` is empty, `Ok(())`, else, `Err(self)`.
+    pub fn into_result(self) -> Result<(), Self> {
+        if self.0.is_empty() {
+            Ok(())
+        } else {
+            Err(self)
+        }
+    }
+
+    /// Collect the error from a result, if present, otherwise return the `Ok` value.
+    pub fn take_error<T>(&mut self, r: Result<T, E>) -> Option<T> {
+        match r {
+            Ok(x) => Some(x),
+            Err(e) => {
+                self.push(e);
+                None
+            }
+        }
     }
 }
 
