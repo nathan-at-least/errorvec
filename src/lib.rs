@@ -1,6 +1,6 @@
 use std::fmt;
 
-#[derive(Debug, derive_more::From)]
+#[derive(Debug, derive_more::From, derive_more::Into)]
 pub struct ErrorVec<E>(Vec<E>);
 
 impl<E> ErrorVec<E> {
