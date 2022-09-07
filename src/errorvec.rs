@@ -1,6 +1,6 @@
 use std::fmt;
 
-#[derive(Debug, Default, derive_more::From, derive_more::Into)]
+#[derive(Debug, derive_more::From, derive_more::Into)]
 pub struct ErrorVec<E>(Vec<E>);
 
 impl<E> ErrorVec<E> {
@@ -36,6 +36,12 @@ impl<E> ErrorVec<E> {
 }
 
 impl<E> std::error::Error for ErrorVec<E> where E: fmt::Display + fmt::Debug {}
+
+impl<E> Default for ErrorVec<E> {
+    fn default() -> Self {
+        ErrorVec(vec![])
+    }
+}
 
 impl<E> FromIterator<E> for ErrorVec<E> {
     fn from_iter<I>(iter: I) -> Self
