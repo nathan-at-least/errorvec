@@ -1,22 +1,37 @@
 use std::fmt;
 
 #[derive(Debug, derive_more::From)]
-pub struct ErrorVec<T>(Vec<T>);
+pub struct ErrorVec<E>(Vec<E>);
 
-impl<T> std::error::Error for ErrorVec<T> where T: fmt::Display + fmt::Debug {}
+impl<E> ErrorVec<E> {
+    pub fn iter(&self) -> impl Iterator<Item = &E> {
+        self.0.iter()
+    }
+}
 
-impl<A> FromIterator<A> for ErrorVec<A> {
-    fn from_iter<T>(iter: T) -> Self
+impl<E> std::error::Error for ErrorVec<E> where E: fmt::Display + fmt::Debug {}
+
+impl<E> FromIterator<E> for ErrorVec<E> {
+    fn from_iter<I>(iter: I) -> Self
     where
-        T: IntoIterator<Item = A>,
+        I: IntoIterator<Item = E>,
     {
         ErrorVec(iter.into_iter().collect())
     }
 }
 
-impl<T> fmt::Display for ErrorVec<T>
+impl<E> IntoIterator for ErrorVec<E> {
+    type Item = E;
+    type IntoIter = <Vec<E> as IntoIterator>::IntoIter;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_iter()
+    }
+}
+
+impl<E> fmt::Display for ErrorVec<E>
 where
-    T: fmt::Display,
+    E: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         for (i, e) in self.0.iter().enumerate() {
