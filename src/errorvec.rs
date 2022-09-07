@@ -34,10 +34,10 @@ where
     E: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let total = self.0.len();
         for (i, e) in self.0.iter().enumerate() {
-            writeln!(f, "Error {}:\n{}\n", i, e)?;
+            writeln!(f, "Error {} of {}:\n{}\n", i + 1, total, e)?;
         }
         Ok(())
     }
 }
-
