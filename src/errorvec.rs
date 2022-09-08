@@ -1,10 +1,29 @@
 use std::fmt;
+use std::ops::{Deref, DerefMut};
 
 /// A newtype wrapper around `Vec<E>` aimed at supporting multi-error scenarios.
 ///
 /// # `Display`
 ///
 /// [ErrorVec] implements [std::fmt::Display] by prepending each error's display with `[error K of N]`.
+///
+/// # `Vec` deref
+///
+/// [ErrorVec] implements [Deref] and [DerefMut] for `Target = Vec<E>`, exposing all [Vec] methods
+/// directly:
+///
+/// ```
+/// use errorvec::ErrorVec;
+///
+/// let mut ev = ErrorVec::default();
+/// ev.push(42);
+/// ev.push(17);
+/// assert_eq!(&[42, 17], ev.as_slice());
+/// assert_eq!(Some(17), ev.pop());
+/// assert_eq!(1, ev.len());
+/// assert_eq!(Some(42), ev.pop());
+/// assert!(ev.is_empty());
+/// ```
 ///
 /// # `ResultIterator` usage
 ///
@@ -59,21 +78,6 @@ use std::fmt;
 pub struct ErrorVec<E>(Vec<E>);
 
 impl<E> ErrorVec<E> {
-    /// An empty `ErrorVec` contains no errors.
-    pub fn is_empty(&self) -> bool {
-        self.0.is_empty()
-    }
-
-    /// Iterate over the contained errors.
-    pub fn iter(&self) -> impl Iterator<Item = &E> {
-        self.0.iter()
-    }
-
-    /// Push an error onto the end.
-    pub fn push(&mut self, error: E) {
-        self.0.push(error);
-    }
-
     /// If `self.is_empty()`, signifying no errors, `Ok(())`, else, `Err(self)`.
     pub fn into_result(self) -> Result<(), Self> {
         self.into_result_with(())
@@ -105,6 +109,20 @@ impl<E> std::error::Error for ErrorVec<E> where E: fmt::Display + fmt::Debug {}
 impl<E> Default for ErrorVec<E> {
     fn default() -> Self {
         ErrorVec(vec![])
+    }
+}
+
+impl<E> Deref for ErrorVec<E> {
+    type Target = Vec<E>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl<E> DerefMut for ErrorVec<E> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
     }
 }
 
