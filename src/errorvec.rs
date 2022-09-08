@@ -5,7 +5,22 @@ use std::ops::{Deref, DerefMut};
 ///
 /// # `Display`
 ///
-/// [ErrorVec] implements [std::fmt::Display] by prepending each error's display with `[error K of N]`.
+/// [ErrorVec] implements [std::fmt::Display] by prepending each error's display with a count:
+///
+/// ```
+/// use errorvec::ErrorVec;
+///
+/// let ev: ErrorVec<&str> = ["whoops", "something borked", "ouch!"].into_iter().collect();
+/// let expected_display = r#"
+/// [error 1 of 3] whoops
+///
+/// [error 2 of 3] something borked
+///
+/// [error 3 of 3] ouch!
+/// "#.trim_start();
+///
+/// assert_eq!(expected_display, &ev.to_string());
+/// ```
 ///
 /// # `Vec` deref
 ///
@@ -160,6 +175,3 @@ where
         Ok(())
     }
 }
-
-#[cfg(test)]
-mod tests;
