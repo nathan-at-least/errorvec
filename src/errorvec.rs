@@ -1,5 +1,6 @@
 use std::fmt;
 
+/// A newtype wrapper around `Vec<E>` aimed at supporting multi-error scenarios.
 #[derive(Debug, derive_more::From, derive_more::Into)]
 pub struct ErrorVec<E>(Vec<E>);
 

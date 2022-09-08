@@ -1,3 +1,5 @@
+//! Utilities for tracking multiple errors.
+
 mod errorvec;
 mod resiter;
 
