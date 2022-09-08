@@ -36,6 +36,12 @@ use crate::ErrorVec;
 pub trait ResultIterator<O, E>: Sized + Iterator<Item = Result<O, E>> {
     /// Gather all `Ok` and `Err` values, returning `Err` if there are 1 or more errors.
     fn into_errorvec_result(self) -> Result<Vec<O>, ErrorVec<E>> {
+        let (oks, ev) = self.into_oks_and_errs();
+        ev.into_result().map(|()| oks)
+    }
+
+    /// Gather all `Ok` and `Err` values, returning each.
+    fn into_oks_and_errs(self) -> (Vec<O>, ErrorVec<E>) {
         let mut oks = vec![];
         let mut ev = ErrorVec::default();
 
@@ -45,7 +51,7 @@ pub trait ResultIterator<O, E>: Sized + Iterator<Item = Result<O, E>> {
             }
         }
 
-        ev.into_result().map(|()| oks)
+        (oks, ev)
     }
 }
 
