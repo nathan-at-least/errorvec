@@ -5,6 +5,11 @@ use std::fmt;
 pub struct ErrorVec<E>(Vec<E>);
 
 impl<E> ErrorVec<E> {
+    /// An empty `ErrorVec` contains no errors.
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
+
     /// Iterate over the contained errors.
     pub fn iter(&self) -> impl Iterator<Item = &E> {
         self.0.iter()
@@ -15,10 +20,15 @@ impl<E> ErrorVec<E> {
         self.0.push(error);
     }
 
-    /// If `self` is empty, `Ok(())`, else, `Err(self)`.
+    /// If `self.is_empty()`, signifying no errors, `Ok(())`, else, `Err(self)`.
     pub fn into_result(self) -> Result<(), Self> {
-        if self.0.is_empty() {
-            Ok(())
+        self.into_result_with(())
+    }
+
+    /// If `self.is_empty()`, signifying no errors, `Ok(value)`, else, `Err(self)`.
+    pub fn into_result_with<T>(self, value: T) -> Result<T, Self> {
+        if self.is_empty() {
+            Ok(value)
         } else {
             Err(self)
         }
