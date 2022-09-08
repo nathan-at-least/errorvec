@@ -1,5 +1,9 @@
 [package]
 name = "errorvec"
+description = "Utilities for tracking multiple errors."
+license = "MIT"
+documentation = "https://doc.rs/errorvec"
+repository = "https://github.com/nathan-at-least/errorvec"
 version = "0.1.0"
 edition = "2021"
 
