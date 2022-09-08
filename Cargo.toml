@@ -7,6 +7,3 @@ edition = "2021"
 
 [dependencies]
 derive_more = "0.99.17"
-
-[dev-dependencies]
-indoc = "1.0"
